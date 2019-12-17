@@ -40,6 +40,20 @@ public class NewsAdapter extends ArrayAdapter<News> {
         TextView sectionName = listItemView.findViewById(R.id.sectionName);
         sectionName.setText(currentNews.getSectionName());
 
+        // Find the TextView in the news_item.xml layout with the ID
+        TextView authorName = listItemView.findViewById(R.id.author_name);
+
+        // Checks if the Author's First and Last Names are available
+        if (currentNews.getAuthor_first_name() == null && currentNews.getAuthor_last_name() == null){
+            authorName.setVisibility(View.GONE);
+        } else if (currentNews.getAuthor_first_name() == null){
+            authorName.setText("Author: " + currentNews.getAuthor_last_name());
+        } else if (currentNews.getAuthor_last_name() == null){
+            authorName.setText("Author: " + currentNews.getAuthor_first_name());
+        } else {
+            authorName.setText("By: " + currentNews.getAuthor_first_name() + " " + currentNews.getAuthor_last_name());
+        }
+
         // Find the TextView in the news_item.xml layout with the ID webPublicationDate
         TextView webPublicationDate = listItemView.findViewById(R.id.webPublicationDate);
 

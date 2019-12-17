@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Helper methods related to requesting and receiving earthquake data from USGS.
+ * Helper methods related to requesting and receiving News data from USGS.
  */
 public final class QueryUtils {
 
@@ -37,7 +37,7 @@ public final class QueryUtils {
     /**
      * Query the USGS dataset and return a list of {@link News} objects.
      */
-    public static List<News> fetchEarthquakeData(String requestUrl) {
+    public static List<News> fetchNewsData(String requestUrl) {
 
         // Create URL object
         URL url = createUrl(requestUrl);
@@ -50,10 +50,10 @@ public final class QueryUtils {
             Log.e(LOG_TAG, "Problem making the HTTP request.", e);
         }
 
-        // Extract relevant fields from the JSON response and create a list of {@link Earthquake}s
+        // Extract relevant fields from the JSON response and create a list of {@link News}s
         List<News> newsList = extractFeatureFromJson(jsonResponse);
 
-        // Return the list of {@link Earthquake}s
+        // Return the list of {@link News}s
         return newsList;
     }
 
@@ -159,7 +159,7 @@ public final class QueryUtils {
             // which represents a list of features (or newsList).
             JSONArray newsArray = responseJson.getJSONArray("results");
 
-            // For each earthquake in the newsArray, create an {@link News} object
+            // For each news in the newsArray, create an {@link News} object
             for (int i = 0; i < newsArray.length(); i++) {
 
                 // Get a single news at position i within the list of newsList
@@ -177,9 +177,25 @@ public final class QueryUtils {
                 // Extract the value for the key called "webUrl"
                 String webUrl = currentNews.getString("webUrl");
 
-                // Create a new {@link Earthquake} object with the magnitude, location, time,
+                // Extract the value for the key called "tags"
+                JSONArray urlTags = currentNews.getJSONArray("tags");
+                // Author's First Name
+                String first_name = null;
+                // Author's Last Name
+                String last_name = null;
+
+                // For each news in the urlTags, create an {@link News} object
+                if (urlTags != null && urlTags.length() >= 0){
+                    for (int j=0; j < urlTags.length(); j++){
+                        JSONObject author = urlTags.getJSONObject(j);
+                        first_name = author.getString("firstName").toUpperCase();
+                        last_name = author.getString("lastName").toUpperCase();
+                    }
+                }
+
+                // Create a new {@link News} object with the magnitude, location, time,
                 // and url from the JSON response.
-                News news = new News(sectionName, webPublicationDate, webTitle, webUrl);
+                News news = new News(sectionName, webPublicationDate, webTitle, webUrl, first_name, last_name);
 
                 // Add the new {@link News} to the list of newsList.
                 newsList.add(news);

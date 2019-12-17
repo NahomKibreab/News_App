@@ -29,6 +29,19 @@
             app:fontFamily="sans-serif-condensed-medium"
             tools:text="Title for News App" />
 
+        <TextView
+            android:id="@+id/author_name"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            android:textColor="#FFEB3B"
+            android:textStyle="italic"
+            app:fontFamily="sans-serif-condensed-light"
+            tools:text="Author Name" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

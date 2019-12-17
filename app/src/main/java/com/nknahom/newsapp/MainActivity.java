@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private TextView mEmptyStateTextView;
 
     /**
-     * Constant value for the earthquake loader ID. We can choose any integer.
+     * Constant value for the News loader ID. We can choose any integer.
      * This really only comes into play if you're using multiple loaders.
      */
     private static final int NEWS_LOADER_ID = 1;
@@ -50,18 +50,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         newsListView.setAdapter(newsAdapter);
 
         // Set an item click listener on the ListView, which sends an intent to a web browser
-        // to open a website with more information about the selected earthquake.
+        // to open a website with more information about the selected News.
         newsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // Find the current earthquake that was clicked on
-                News currentEarthquake = newsAdapter.getItem(position);
+                // Find the current News that was clicked on
+                News currentNews = newsAdapter.getItem(position);
 
                 // Convert the String URL into a URI object (to pass into the Intent constructor)
-                Uri earthquakeUri = Uri.parse(currentEarthquake.getWebUrl());
+                Uri newsUri = Uri.parse(currentNews.getWebUrl());
 
-                // Create a new intent to view the earthquake URI
-                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, earthquakeUri);
+                // Create a new intent to view the News URI
+                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, newsUri);
 
                 // Send the intent to launch a new activity
                 startActivity(websiteIntent);
@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         builder.scheme(getString(R.string.network_scheme))
                 .authority(getString(R.string.guardian_api_domain))
                 .appendPath(mUrlSubDomain)
+                .appendQueryParameter(getString(R.string.show_tags),getString(R.string.news_author))
                 .appendQueryParameter(getString(R.string.guardian_api_key), getString(R.string.guardian_student_key));
 
         return (new NewsLoader(this, builder.build().toString()));
@@ -157,8 +158,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivity(settingsIntent);
                 return true;
             case R.id.action_refresh:
-                finish();
-                startActivity(getIntent());
+                getLoaderManager().restartLoader(NEWS_LOADER_ID, null, this);
                 break;
         }
         return super.onOptionsItemSelected(item);

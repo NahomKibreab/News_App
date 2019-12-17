@@ -34,5 +34,7 @@
     <!-- Label for order-by politics option [CHAR LIMIT=20] -->
     <string name="settings_order_by_politics_label">Politics</string>
     <string name="settings_order_by_politics_value" translatable="false">politics</string>
+    <string name="show_tags">show-tags</string>
+    <string name="news_author">contributor</string>
 
 </resources>
