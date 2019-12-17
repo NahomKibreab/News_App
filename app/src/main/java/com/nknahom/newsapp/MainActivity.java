@@ -4,12 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,9 +29,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      * This really only comes into play if you're using multiple loaders.
      */
     private static final int NEWS_LOADER_ID = 1;
-
-    private final static String NEWSURL = "https://content.guardianapis.com/search?api-key=95d83c8c-6bc3-4ecc-b1a1-2f54bfe0c342";
-
     private NewsAdapter newsAdapter;
 
     @Override
@@ -44,6 +44,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         newsAdapter = new NewsAdapter(this, new ArrayList<News>());
 
         newsListView.setAdapter(newsAdapter);
+
+        // Set an item click listener on the ListView, which sends an intent to a web browser
+        // to open a website with more information about the selected earthquake.
+        newsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // Find the current earthquake that was clicked on
+                News currentEarthquake = newsAdapter.getItem(position);
+
+                // Convert the String URL into a URI object (to pass into the Intent constructor)
+                Uri earthquakeUri = Uri.parse(currentEarthquake.getWebUrl());
+
+                // Create a new intent to view the earthquake URI
+                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, earthquakeUri);
+
+                // Send the intent to launch a new activity
+                startActivity(websiteIntent);
+            }
+        });
 
         // Get a reference to the ConnectivityManager to check state of network connectivity
         ConnectivityManager connMgr = (ConnectivityManager)
@@ -74,7 +93,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<List<News>> onCreateLoader(int id, Bundle args) {
-        return (new NewsLoader(this, NEWSURL));
+
+        // https://content.guardianapis.com/search?api-key=95d83c8c-6bc3-4ecc-b1a1-2f54bfe0c342
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme(getString(R.string.network_scheme))
+                .authority(getString(R.string.guardian_api_domain))
+                .appendPath(getString(R.string.guardian_api_subdomain))
+                .appendQueryParameter(getString(R.string.guardian_api_key), getString(R.string.guardian_student_key));
+
+        return (new NewsLoader(this, builder.build().toString()));
     }
 
     @Override
