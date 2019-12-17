@@ -6,11 +6,12 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      */
     private static final int NEWS_LOADER_ID = 1;
     private NewsAdapter newsAdapter;
+    private String mUrlSubDomain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,10 +100,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         // https://content.guardianapis.com/search?api-key=95d83c8c-6bc3-4ecc-b1a1-2f54bfe0c342
 
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mUrlSubDomain = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default));
+
         Uri.Builder builder = new Uri.Builder();
         builder.scheme(getString(R.string.network_scheme))
                 .authority(getString(R.string.guardian_api_domain))
-                .appendPath(getString(R.string.guardian_api_subdomain))
+                .appendPath(mUrlSubDomain)
                 .appendQueryParameter(getString(R.string.guardian_api_key), getString(R.string.guardian_student_key));
 
         return (new NewsLoader(this, builder.build().toString()));
@@ -144,11 +151,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            Intent settingsIntent = new Intent(this, SettingsActivity.class);
-            startActivity(settingsIntent);
-            return true;
+        switch (id){
+            case R.id.action_settings:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                return true;
+            case R.id.action_refresh:
+                finish();
+                startActivity(getIntent());
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setUrlSubDomain(String urlSubDomain){
+        mUrlSubDomain = urlSubDomain;
     }
 }

@@ -24,11 +24,8 @@ public class SettingsActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settings_main);
 
-//            Preference minMagnitude = findPreference(getString(R.string.settings_min_magnitude_key));
-//            bindPreferenceSummaryToValue(minMagnitude);
-
-//            Preference orderBy = findPreference(getString(R.string.settings_order_by_key));
-//            bindPreferenceSummaryToValue(orderBy);
+            Preference orderBy = findPreference(getString(R.string.settings_order_by_key));
+            bindPreferenceSummaryToValue(orderBy);
         }
 
         @Override
@@ -41,6 +38,9 @@ public class SettingsActivity extends AppCompatActivity {
                 if (prefIndex >= 0) {
                     CharSequence[] labels = listPreference.getEntries();
                     preference.setSummary(labels[prefIndex]);
+                    // This code will update the News lists in the MainActivity
+                    MainActivity mainActivity = new MainActivity();
+                    mainActivity.setUrlSubDomain(labels[prefIndex].toString());
                 }
             } else {
                 preference.setSummary(stringValue);

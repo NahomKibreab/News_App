@@ -1,9 +1,7 @@
 package com.nknahom.newsapp;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +14,8 @@ import androidx.annotation.RequiresApi;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class NewsAdapter extends ArrayAdapter<News> {
     public NewsAdapter(@NonNull Context context, @NonNull List objects) {
